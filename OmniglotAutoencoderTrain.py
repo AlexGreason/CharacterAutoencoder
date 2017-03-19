@@ -53,7 +53,6 @@ elif computer == "desktop":
 
 x_train = x_train.reshape((x_train.shape[0], 1, sidelen, sidelen))
 
-
 vae.load_weights("omniglot_16_1.sav")
 if nb_epoch > 0:
     for epoch in range(nb_epoch):
