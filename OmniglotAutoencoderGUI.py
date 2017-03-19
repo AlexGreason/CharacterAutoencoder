@@ -2,7 +2,6 @@ import time
 
 import numpy as np
 import pylab
-from keras import objectives
 from keras.layers import Input, Dense, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D
 from keras.models import Model
 from matplotlib.widgets import Slider, Button
@@ -43,14 +42,8 @@ m_decoded = m(l_decoded)
 n_decoded = n(m_decoded)
 x_decoded_mean = decoder_mean(n_decoded)
 
-
-def vae_loss(x, x_decoded_mean):
-    xent_loss = objectives.binary_crossentropy(x, x_decoded_mean)
-    return xent_loss
-
-
 vae = Model(x, x_decoded_mean)
-vae.compile(optimizer='rmsprop', loss=vae_loss)
+vae.compile(optimizer='rmsprop', loss="binary_crossentropy")
 
 computer = "desktop"
 

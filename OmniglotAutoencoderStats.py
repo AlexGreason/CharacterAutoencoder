@@ -1,14 +1,7 @@
-import time
-
 import numpy as np
-import pygame
-import scipy.misc as misc
-import scipy.ndimage as ndimage
-from keras import objectives
 from keras.layers import Input, Dense, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D
 from keras.models import Model
-
-from helperfunctions import genvec, Beziercurve
+from scipy import stats
 
 batch_size = 32
 sidelen = 96
@@ -44,14 +37,8 @@ m_decoded = m(l_decoded)
 n_decoded = n(m_decoded)
 x_decoded_mean = decoder_mean(n_decoded)
 
-
-def vae_loss(x, x_decoded_mean):
-    xent_loss = objectives.binary_crossentropy(x, x_decoded_mean)
-    return xent_loss
-
-
 vae = Model(x, x_decoded_mean)
-vae.compile(optimizer='rmsprop', loss=vae_loss)
+vae.compile(optimizer='rmsprop', loss="binary_crossentropy")
 
 computer = "desktop"
 
@@ -80,55 +67,9 @@ _n_decoded = n(_m_decoded)
 _x_decoded_mean = decoder_mean(_n_decoded)
 generator = Model(decoder_input, _x_decoded_mean)
 
-
-n_frame = 500
-pygame.init()
-x_dim, y_dim = 600, 600
-screen = pygame.display.set_mode((x_dim, y_dim))
-screen.fill((0, 0, 0))
-numpoints = 2
-np.random.seed(int(time.time()))
-type = "random"
-
-z = genvec(type = type)
-zs = [genvec(type = type) for i in range(numpoints)]
-iteration = 0
-while True:
-    pygame.event.get()
-    starttime = time.time()
-    if iteration % n_frame == 0:
-        t = 0
-        zs = [z] + [genvec(type = type) for i in range(numpoints - 1)]
-        print("changing course")
-    if t == 0:
-        time.sleep(.5)
-    iteration+= 1
-    t += 1/n_frame
-    print(t)
-    z = Beziercurve(zs, t)
-    frame = generator.predict(z.reshape((1,latent_dim)))
-    print(frame.shape)
-    #frame[frame < .25] = 0
-    #frame[frame >= .75] = 1
-    base = (frame * 255).reshape((sidelen, sidelen))
-    base = ndimage.gaussian_filter(base, sigma=1)
-    resized = misc.imresize(base, (x_dim, y_dim), interp='bicubic')
-    resized[resized < 128] = 0
-    resized[resized >= 128] = 255
-    resized = resized[:, :, None].repeat(3, -1).astype("uint8")
-    surface = pygame.surfarray.make_surface(resized)
-    newscreen = pygame.transform.scale(surface, (x_dim, y_dim))
-    screen.fill((0, 0, 0))
-    screen.blit(newscreen, (0, 0))
-    pygame.display.flip()
-    endtime = time.time()
-    print("processing image ", iteration, "frame time: ", endtime-starttime)
-
-
-
-#values = encoder.predict(x_train, verbose=1)
-#print("")
-#print(np.mean(values, axis=0))
-#print(np.std(values, axis=0))
-#print(stats.skew(values, axis=0))
-#print(stats.describe(values, axis=0))
+values = encoder.predict(x_train, verbose=1)
+print("")
+print(np.mean(values, axis=0))
+print(np.std(values, axis=0))
+print(stats.skew(values, axis=0))
+print(stats.describe(values, axis=0))
