@@ -1,5 +1,4 @@
 import numpy as np
-from keras import objectives
 from keras.layers import Input, Dense, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D
 from keras.models import Model
 
@@ -38,16 +37,11 @@ m_decoded = m(l_decoded)
 n_decoded = n(m_decoded)
 x_decoded_mean = decoder_mean(n_decoded)
 
-
-def vae_loss(x, x_decoded_mean):
-    xent_loss = objectives.binary_crossentropy(x, x_decoded_mean)
-    return xent_loss
-
-weights = "omniglot_16_1.sav"
-model = "omniglot_16_1.json"
+file = "omniglot_16_"
+versionnum = 2
 
 vae = Model(x, x_decoded_mean)
-vae.compile(optimizer='rmsprop', loss=vae_loss)
+vae.compile(optimizer='rmsprop', loss="binary_crossentropy")
 
 computer = "desktop"
 
@@ -71,5 +65,5 @@ if nb_epoch > 0:
                 batch_size=batch_size,
                 validation_split=.1)
         json_string = vae.to_json()
-        open('1dimlatent-1.json', 'w').write(json_string)
-        vae.save_weights("1dimlatent-1.sav", overwrite=True)
+        open(file + str(versionnum) + ".json", 'w').write(json_string)
+        vae.save_weights(file + str(versionnum) + ".sav", overwrite=True)
