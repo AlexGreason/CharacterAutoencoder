@@ -1,11 +1,7 @@
 import numpy as np
-import matplotlib.pyplot as plt
-import time
-import pygame
-import pylab
-import scipy.ndimage as ndimage
 import scipy.misc as misc
-import scipy.stats as stats
+import scipy.ndimage as ndimage
+
 
 def Beziercurve(points, t):
     if len(points) == 2:

@@ -1,7 +1,7 @@
-from keras.layers import Input, Dense, Lambda, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D, AveragePooling2D
-from keras.models import Model, model_from_json
-from keras import objectives
 import numpy as np
+from keras import objectives
+from keras.layers import Input, Dense, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D
+from keras.models import Model
 
 batch_size = 32
 sidelen = 96

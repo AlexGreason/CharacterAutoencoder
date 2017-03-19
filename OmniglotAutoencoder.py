@@ -81,11 +81,6 @@ _x_decoded_mean = decoder_mean(_n_decoded)
 generator = Model(decoder_input, _x_decoded_mean)
 
 
-
-
-lowerbound = -10
-upperbound = 10
-
 n_frame = 500
 pygame.init()
 x_dim, y_dim = 600, 600
@@ -94,10 +89,6 @@ screen.fill((0, 0, 0))
 numpoints = 2
 np.random.seed(int(time.time()))
 type = "random"
-
-
-
-
 
 z = genvec(type = type)
 zs = [genvec(type = type) for i in range(numpoints)]

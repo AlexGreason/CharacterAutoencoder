@@ -1,17 +1,12 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import time
-import pygame
-import pylab
-import scipy.ndimage as ndimage
-import scipy.misc as misc
-import scipy.stats as stats
 
-from keras.layers import Input, Dense, Lambda, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D, AveragePooling2D
-from keras.models import Model, model_from_json
-from keras import backend as K
+import matplotlib.pyplot as plt
+import numpy as np
 from keras import objectives
-from helperfunctions import process, genvec, Beziercurve
+from keras.layers import Input, Dense, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D
+from keras.models import Model
+
+from helperfunctions import genvec
 
 batch_size = 32
 sidelen = 96
