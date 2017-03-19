@@ -70,13 +70,6 @@ vae.load_weights("omniglot_16_1.sav")
 encoder = Model(x, z_mean)
 print(encoder.output_shape)
 
-# display a 2D plot of the digit classes in the latent space
-# x_test_encoded = encoder.predict(x_test, batch_size=batch_size)
-# plt.figure(figsize=(6, 6))
-# plt.scatter(x_test_encoded[:, 0], x_test_encoded[:, 1], c=y_test)
-# plt.colorbar()
-# plt.show()
-
 # build a digit generator that can sample from the learned distribution
 decoder_input = Input(shape=(latent_dim,))
 _h_decoded = decoder_h(decoder_input)
@@ -88,29 +81,6 @@ _m_decoded = m(_l_decoded)
 _n_decoded = n(_m_decoded)
 _x_decoded_mean = decoder_mean(_n_decoded)
 generator = Model(decoder_input, _x_decoded_mean)
-
-# display a 2D manifold of the digits
-n = 20  # figure with upperboundxupperbound digits
-digit_size = sidelen
-figure = np.zeros((digit_size * n, digit_size * n))
-
-lowerbound = -10
-upperbound = 10
-#we will sample n points within [lowerbound, upperbound] standard deviations
-#grid_x = np.linspace(lowerbound, upperbound, n)
-#grid_y = np.linspace(lowerbound, upperbound, n)
-
-# for i, yi in enumerate(grid_x):
-#     for j, xi in enumerate(grid_y):
-#         z_sample = np.random.uniform(lowerbound, upperbound, latent_dim).reshape((1,latent_dim))
-#         x_decoded = generator.predict(z_sample)
-#         digit = x_decoded[0].reshape(digit_size, digit_size)
-#         figure[i * digit_size: (i + 1) * digit_size,
-#                j * digit_size: (j + 1) * digit_size] = digit
-#
-# plt.figure(figsize=(25, 25))
-# plt.imshow(figure, cmap='Greys')
-# plt.show()
 
 def Beziercurve(points, t):
     if len(points) == 2:
@@ -146,6 +116,7 @@ z = genvec(type = type)
 zs = [genvec(type = type) for i in range(numpoints)]
 iteration = 0
 while True:
+    pygame.event.get()
     starttime = time.time()
     if iteration % n_frame == 0:
         t = 0
