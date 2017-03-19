@@ -6,6 +6,7 @@ import pylab
 import scipy.ndimage as ndimage
 import scipy.misc as misc
 import scipy.stats as stats
+from helperfunctions import process, genvec, Beziercurve
 
 from keras.layers import Input, Dense, Lambda, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D, AveragePooling2D
 from keras.models import Model, model_from_json
@@ -82,12 +83,7 @@ _n_decoded = n(_m_decoded)
 _x_decoded_mean = decoder_mean(_n_decoded)
 generator = Model(decoder_input, _x_decoded_mean)
 
-def Beziercurve(points, t):
-    if len(points) == 2:
-        return points[0] * (1 - t) + points[1] * t
-    else:
-        intpoints = [Beziercurve([points[i], points[i + 1]], t) for i in range(len(points) - 1)]
-        return Beziercurve(intpoints, t)
+
 
 
 lowerbound = -10
@@ -103,13 +99,7 @@ np.random.seed(int(time.time()))
 type = "random"
 
 
-def genvec(type="random"):
-    if type == "random":
-        return np.random.uniform(lowerbound, upperbound, latent_dim)
-    else:
-        x = np.random.randint(0, x_train.shape[0])
-        z = encoder.predict(x_train[x].reshape((1, 1, sidelen, sidelen)))
-        return z
+
 
 
 z = genvec(type = type)
@@ -146,95 +136,7 @@ while True:
     endtime = time.time()
     print("processing image ", iteration, "frame time: ", endtime-starttime)
 
-# for i in range(100, 10000):
-#     x =np.random.randint(0, x_train.shape[0])
-#     z = encoder.predict(x_train[x].reshape((1, 1, sidelen, sidelen)))
-#     original = x_train[x].reshape((sidelen, sidelen))
-#     baseoriginal = (original * 255).reshape((sidelen, sidelen))
-#     baseoriginal = baseoriginal[:, :, None].repeat(3, -1).astype("uint8")
-#     surfaceoriginal = pygame.surfarray.make_surface(baseoriginal)
-#     newscreenoriginal = pygame.transform.scale(surfaceoriginal, (x_dim//2, y_dim))
-#     print(z.shape)
-#     frame = generator.predict(z.reshape((1,latent_dim)))
-#     print(frame.shape)
-#     frame[frame < .5] = 0
-#     frame[frame >= .5] = 1
-#     base = (frame * 255).reshape((sidelen, sidelen))
-#     base = base[:, :, None].repeat(3, -1).astype("uint8")
-#     surface = pygame.surfarray.make_surface(base)
-#     newscreen = pygame.transform.scale(surface, (x_dim//2, y_dim))
-#     screen.fill((0, 0, 0))
-#     screen.blit(newscreenoriginal, (0, 0))
-#     screen.blit(newscreen, (600, 0))
-#     pygame.display.flip()
-#     endtime = time.time()
-#     time.sleep(1)
 
-# iteration= 0
-# t = 0
-# type = "existing"
-# z = genvec(type=type)
-# zs = [genvec(type=type) for i in range(numpoints)]
-#
-#
-def process(frame, x, y):
-    base = (frame * 255).reshape((sidelen, sidelen))
-    base = ndimage.gaussian_filter(base, sigma=1)
-    resized = misc.imresize(base, (x, y), interp='bicubic')
-    resized[resized < 128] = 0
-    resized[resized >= 128] = 255
-    #resized = resized[:, :, None].repeat(3, -1).astype("uint8")
-    return resized
-#
-#
-# while True:
-#     starttime = time.time()
-#     if iteration % n_frame == 0:
-#         t = 0
-#         x = np.random.randint(0, x_train.shape[0])
-#         original = x_train[x].reshape((sidelen, sidelen))
-#         original = process(original, 600, 600)
-#         originalsurface = pygame.surfarray.make_surface(original)
-#         screen.blit(originalsurface, (0, 0))
-#         newz = encoder.predict(x_train[x].reshape((1, 1, sidelen, sidelen)))
-#         zs = [z] + [newz]
-#         print("changing course")
-#     if t == 0:
-#         time.sleep(1)
-#     iteration += 1
-#     t += 1 / n_frame
-#     print(t)
-#     z = Beziercurve(zs, t)
-#     frame = generator.predict(z.reshape((1, latent_dim)))
-#     resized = process(frame, 600, 600)
-#     surface = pygame.surfarray.make_surface(resized)
-#     screen.fill((0, 0, 0))
-#     screen.blit(surface, (600, 0))
-#     screen.blit(originalsurface, (0, 0))
-#     pygame.display.flip()
-#     endtime = time.time()
-#     print("processing image ", iteration, "frame time: ", endtime - starttime)
-#
-# np.random.seed(int(time.time()))
-# lowerbound = -5
-# upperbound = 5
-# grid_x = np.linspace(lowerbound, upperbound, n)
-# grid_y = np.linspace(lowerbound, upperbound, n)
-# dim1 = np.random.uniform(-1,1,16)
-# dim2 = np.random.uniform(-1,1,16)
-# offset = np.random.uniform(-3,3,16)
-
-# for i, yi in enumerate(grid_x):
-#     for j, xi in enumerate(grid_y):
-#         z_sample = (dim1*yi+dim2*xi+offset).reshape((1,16))
-#         x_decoded = generator.predict(z_sample)
-#         digit = x_decoded[0].reshape(digit_size, digit_size)
-#         figure[i * digit_size: (i + 1) * digit_size,
-#                j * digit_size: (j + 1) * digit_size] = digit
-#
-# plt.figure(figsize=(25, 25))
-# plt.imshow(figure, cmap='Greys')
-#plt.show()
 
 #values = encoder.predict(x_train, verbose=1)
 #print("")

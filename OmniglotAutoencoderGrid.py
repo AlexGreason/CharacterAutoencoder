@@ -11,6 +11,7 @@ from keras.layers import Input, Dense, Lambda, Convolution2D, MaxPooling2D, Resh
 from keras.models import Model, model_from_json
 from keras import backend as K
 from keras import objectives
+from helperfunctions import process, genvec, Beziercurve
 
 batch_size = 32
 sidelen = 96
@@ -86,14 +87,6 @@ n = 20  # figure with upperboundxupperbound digits
 digit_size = sidelen
 figure = np.zeros((digit_size * n, digit_size * n))
 
-def genvec(type="random", lowerbound=-10, upperbound=10):
-    if type == "random":
-        return np.random.uniform(lowerbound, upperbound, latent_dim)
-    else:
-        x = np.random.randint(0, x_train.shape[0])
-        z = encoder.predict(x_train[x].reshape((1, 1, sidelen, sidelen)))
-        return z
-
 def showgrid(n, lowerbound, upperbound, type):
     np.random.seed(int(time.time()))
     grid_x = np.linspace(lowerbound, upperbound, n)
@@ -109,7 +102,7 @@ def showgrid(n, lowerbound, upperbound, type):
             elif type == "random":
                 z_sample = genvec().reshape((1,16))
             else:
-                z_sample = genvec(type="existing").reshape((1,16))
+                z_sample = genvec(type="existing", x_train=x_train, encoder=encoder).reshape((1,16))
             x_decoded = generator.predict(z_sample)
             digit = x_decoded[0].reshape(digit_size, digit_size)
             figure[i * digit_size: (i + 1) * digit_size,
@@ -120,4 +113,4 @@ def showgrid(n, lowerbound, upperbound, type):
     plt.show()
 
 if __name__ == "__main__":
-    showgrid(20, -5, 5, "randaxes")
+    showgrid(20, -5, 5, "existing")

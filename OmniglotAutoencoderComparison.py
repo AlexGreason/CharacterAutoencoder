@@ -11,6 +11,7 @@ from keras.layers import Input, Dense, Lambda, Convolution2D, MaxPooling2D, Resh
 from keras.models import Model, model_from_json
 from keras import backend as K
 from keras import objectives
+from helperfunctions import process, genvec, Beziercurve
 
 batch_size = 32
 sidelen = 96
@@ -82,12 +83,6 @@ _n_decoded = n(_m_decoded)
 _x_decoded_mean = decoder_mean(_n_decoded)
 generator = Model(decoder_input, _x_decoded_mean)
 
-def Beziercurve(points, t):
-    if len(points) == 2:
-        return points[0] * (1 - t) + points[1] * t
-    else:
-        intpoints = [Beziercurve([points[i], points[i + 1]], t) for i in range(len(points) - 1)]
-        return Beziercurve(intpoints, t)
 
 
 lowerbound = -10
@@ -102,24 +97,7 @@ numpoints = 2
 np.random.seed(int(time.time()))
 
 
-def genvec(type="random"):
-    if type == "random":
-        return np.random.uniform(lowerbound, upperbound, latent_dim)
-    else:
-        x = np.random.randint(0, x_train.shape[0])
-        z = encoder.predict(x_train[x].reshape((1, 1, sidelen, sidelen)))
-        return z
-
-def process(frame, x, y, threshold=128):
-    base = (frame * 255).reshape((sidelen, sidelen))
-    base = ndimage.gaussian_filter(base, sigma=1)
-    resized = misc.imresize(base, (x, y), interp='bicubic')
-    resized[resized < 128] = 0
-    resized[resized >= 128] = 255
-    #resized = resized[:, :, None].repeat(3, -1).astype("uint8")
-    return resized
-
-type = "animation"
+type = "pictures"
 
 if type == "pictures":
     while True:
@@ -147,12 +125,12 @@ if type == "pictures":
         endtime = time.time()
         time.sleep(1)
 
-else: #  type == "animation"
+else: #  "animation"
     iteration= 0
     t = 0
     type = "existing"
-    z = genvec(type=type)
-    zs = [genvec(type=type) for i in range(numpoints)]
+    z = genvec(type=type, x_train=x_train, encoder=encoder)
+    zs = [genvec(type=type, x_train=x_train, encoder=encoder) for i in range(numpoints)]
     while True:
         pygame.event.get()
         starttime = time.time()

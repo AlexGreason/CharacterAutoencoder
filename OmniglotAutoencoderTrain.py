@@ -1,6 +1,7 @@
 from keras.layers import Input, Dense, Lambda, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D, AveragePooling2D
 from keras.models import Model, model_from_json
 from keras import objectives
+import numpy as np
 
 batch_size = 32
 sidelen = 96
@@ -48,21 +49,27 @@ model = "omniglot_16_1.json"
 vae = Model(x, x_decoded_mean)
 vae.compile(optimizer='rmsprop', loss=vae_loss)
 
-#x_train = np.load("/home/exa/Documents/PythonData/images_all_processed.npy")
-#x_train = x_train.reshape((x_train.shape[0], 1, 96, 96))
-# x_train = x_train.reshape((x_train.shape[0], 1, sidelen, sidelen))
+computer = "desktop"
 
-#vae = model_from_json(open("omniglot_16_1.json").read())
+if computer == "laptop":
+    x_train = np.load("/home/exa/Documents/PythonData/images_all_processed.npy")
+
+elif computer == "desktop":
+    x_train = np.load("D:\\conlangstuff\\images_all_processed.npy")
+
+x_train = x_train.reshape((x_train.shape[0], 1, sidelen, sidelen))
+
+
 vae.load_weights("omniglot_16_1.sav")
-# if nb_epoch > 0:
-#     for epoch in range(nb_epoch):
-#         print("epoch", epoch)
-#         vae.fit(x_train, x_train,
-#                 shuffle=True,
-#                 verbose=1,
-#                 nb_epoch=1,
-#                 batch_size=batch_size,
-#                 validation_split=.1)
-#         json_string = vae.to_json()
-#         open('1dimlatent-1.json', 'w').write(json_string)
-#         vae.save_weights("1dimlatent-1.sav", overwrite=True)
+if nb_epoch > 0:
+    for epoch in range(nb_epoch):
+        print("epoch", epoch)
+        vae.fit(x_train, x_train,
+                shuffle=True,
+                verbose=1,
+                nb_epoch=1,
+                batch_size=batch_size,
+                validation_split=.1)
+        json_string = vae.to_json()
+        open('1dimlatent-1.json', 'w').write(json_string)
+        vae.save_weights("1dimlatent-1.sav", overwrite=True)
