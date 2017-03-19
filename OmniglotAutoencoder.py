@@ -1,17 +1,14 @@
-import numpy as np
-import matplotlib.pyplot as plt
 import time
-import pygame
-import pylab
-import scipy.ndimage as ndimage
-import scipy.misc as misc
-import scipy.stats as stats
-from helperfunctions import process, genvec, Beziercurve
 
-from keras.layers import Input, Dense, Lambda, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D, AveragePooling2D
-from keras.models import Model, model_from_json
-from keras import backend as K
+import numpy as np
+import pygame
+import scipy.misc as misc
+import scipy.ndimage as ndimage
 from keras import objectives
+from keras.layers import Input, Dense, Convolution2D, MaxPooling2D, Reshape, Flatten, UpSampling2D
+from keras.models import Model
+
+from helperfunctions import genvec, Beziercurve
 
 batch_size = 32
 sidelen = 96
@@ -144,85 +141,3 @@ while True:
 #print(np.std(values, axis=0))
 #print(stats.skew(values, axis=0))
 #print(stats.describe(values, axis=0))
-
-# import pylab
-# from matplotlib.widgets import Slider, Button, RadioButtons
-#
-# pylab.figure(num=1, figsize=(10,10))
-# ax = pylab.subplot(111)
-# pylab.subplots_adjust(left=0.3, bottom=0.4)
-# l = ax.imshow(np.array([[1]+[0]*599]*600, dtype='int64'), cmap="Greys", animated=True)
-# #pylab.axis([0, 1, -10, 10])
-# lower = -20
-# upper = 20
-# axcolor = 'lightgoldenrodyellow'
-# axes = []
-# sliders = []
-# for x in range(16):
-#     axes.append(pylab.axes([0.15, x*.025, 0.75, 0.01], axisbg=axcolor))
-# for x in range(16):
-#     sliders.append(Slider(axes[x], str(x), lower, upper, valinit=0))
-#
-#
-# def update(val):
-#     values = [sliders[x].val for x in range(16)]
-#     data = process(generator.predict((np.array(values)).reshape((1,16))).reshape(96,96), 600, 600)
-#     l.set_data(data)
-#     pylab.draw()
-# [sliders[x].on_changed(update) for x in range(16)]
-#
-#
-# resetax = pylab.axes([0, 0.025, 0.1, 0.04])
-# resetb = Button(resetax, 'Random', color=axcolor, hovercolor='0.975')
-# def reset(event):
-#     for x in range(16):
-#         sliders[x].set_val(np.random.uniform(lower, upper, 1))
-# resetb.on_clicked(reset)
-#
-# savax = pylab.axes([0, 0.2, 0.1, 0.04])
-# savb = Button(savax, 'Save', color=axcolor, hovercolor='0.975')
-# def save(event):
-#     values = []
-#     for x in range(16):
-#         try:
-#             values.append(float("{0:.3f}".format(sliders[x].val[0])))
-#         except:
-#             values.append(float("{0:.3f}".format(sliders[x].val)))
-#     print(values)
-#     print()
-# savb.on_clicked(save)
-#
-# loadax = pylab.axes([0, 0.1, 0.1, 0.04])
-# loadb = Button(loadax, 'Load', color=axcolor, hovercolor='0.975')
-# def load(event):
-#     values = input("Enter character vector:")
-#     values = values[1:-1]
-#     values = values.replace(" ", "")
-#     values = values.split(",")
-#     values = [float(x) for x in values]
-#     for x in range(16):
-#         sliders[x].set_val(values[x])
-# loadb.on_clicked(load)
-#
-# pylab.show()
-
-# Various figures for conv-7
-#arabic numeral 4: [-15.33, -100, -40.33, -16, 52.33, 43.67, -60.67, 98.67, -28.33, 48.33, 91, 45.33, 64.33, -14, 66.33, -100]
-#also a 4: [7.667, -100.0, -39.0, -9.0, 15.667, 54.667, -53.333, 95.0, -64.333, 55.0, 80.333, 61.333, 84.333, -55.667, 75.333, -49.333]
-#distance between latent vectors may not be a good similarity metric
-# u and a sideways J above it [-5.433, -10.0, 7.933, 8.367, 3.767, -1.733, -3.867, -3.267, -1.8, -9.733, -3.7, -5.433, -10.0, 2.067, 5.033, -1.433]
-# circle with lines coming off top and bottom [-5.433, 5.2, 7.933, 8.367, 3.767, -1.733, -3.867, -3.267, -1.8, -9.733, -3.7, -5.433, -10.0, 2.067, 5.033, -1.433]
-# perpendicularity symbol with hat [-5.6, -8.167, 6.467, -10.0, -10.0, 0.3, 3.833, 2.133, 0.833, 1.567, 4.667, -7.233, -10.0, -10.0, -10.0, 3.2]
-# bowl with line over it [3.567, 4.733, -4.133, -1.533, -10.0, -10.0, 10.0, -0.733, -10.0, -3.9, -0.4, -10.0, 4.733, -5.633, -2.733, 1.1]
-# ladder on its side: [3.033, 7.433, 2.033, 7.367, 5.6, -4.6, 10.0, 10.0, -9.567, -4.033, 4.9, -4.367, 1.2, 10.0, 2.4, 10.0]
-# plus sign, but the the left and bottom forming a loop and the right bent 90 degrees upward [-1.667, -10.6, -20.0, -13.867, 6.8, -6.533, -5.933, -20.0, -20.0, 20.0, 20.0, 15.533, -20.0, -20.0, -4.333, 3.0]
-# T crossed with mirrored J, but with a really sharp angle on the mirrored J [-20.0, 4.933, 7.933, 2.8, 3.533, -20.0, 20.0, 15.733, -20.0, 20.0, 6.2, -3.333, 5.533, -5.267, -6.267, 0.733]
-# tall vertical line with smaller vertical lines on both sides [6.4, 16.6, -4.267, -0.533, 8.667, 3.0, -1.067, -0.267, -0.4, -1.2, -6.467, 0.667, -11.467, -5.267, -4.4, -4.333]
-# the left edge of nevada with a little curly bit coming off the shallow angle [1.733, 20.0, 10.133, 13.933, -11.0, -14.6, -13.667, 6.867, -4.2, -2.867, 8.933, 14.4, 3.533, 11.067, -16.6, -7.867]
-# lowish aspect ratio rectangle with line pointing upward coming off left upper corner [18.8, 4.067, -2.6, 6.667, -15.667, 17.8, 4.667, -16.067, -2.867, 7.467, 15.267, 7.933, 5.6, -4.667, 3.2, 16.867]
-# vertical line with line coming off to right and sharply bending down on top and short line coming off to right on bottom [1.0, 20.0, 20.0, -20.0, -11.867, 20.0, -3.733, -20.0, -8.0, -20.0, 20.0, -20.0, -1.333, -12.067, 2.4, -20.0]
-# I [10.0, -5.4, -2.867, -6.133, -16.2, -10.067, 6.933, 1.067, -14.6, -1.267, -2.333, -16.933, 10.133, -20.0, -20.0, -1.133]
-# weird thing (W with a Y as the middle?) [20.0, 8.933, -8.8, 15.067, -20.0, 5.133, -3.2, -5.8, -20.0, 8.8, 20.0, 14.8, 9.4, 20.0, -6.733, 13.933]
-# perpendicularity symbol [7.533, -20.0, 9.333, 14.467, 4.467, -7.067, 0.067, -20.0, 4.733, -3.067, 7.933, -12.333, 2.333, -4.133, -20.0, 20.0]
-# sorta a W but with left bent things on the left two and a short right one [-0.592, -4.437, -1.53, 3.726, 1.723, -5.548, -7.522, -13.294, -19.16, -2.086, 12.332, 8.667, -18.933, 11.0, -13.267, 20.0]
-# a thing [14.027, 13.222, -12.16, -11.198, 9.491, 19.545, 9.137, 6.489, -15.164, 1.695, -6.774, 6.257, 0.994, -3.902, -20.0, -6.467]
