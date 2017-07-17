@@ -32,7 +32,7 @@ k = Conv2D(128, (3,3), padding='same', activation='relu')
 l = UpSampling2D((4, 4))
 m = Conv2D(128, (3,3), padding='same', activation='relu')
 n = Conv2D(128, (3,3), padding='same', activation='relu')
-decoder_mean = Conv2D(1, 3, 3, border_mode='same', activation='sigmoid')
+decoder_mean = Conv2D(1, (3,3), padding='same', activation='sigmoid')
 
 h_decoded = decoder_h(z_mean)
 i_decoded = i(h_decoded)
