@@ -2,12 +2,14 @@ import numpy as np
 from keras.layers import Input, Dense, Conv2D, MaxPooling2D, Reshape, Flatten, UpSampling2D
 from keras.models import Model
 
-batch_size = 32
+
+nb_epoch = 1000
+
+batch_size = 128
 sidelen = 96
-original_shape = (batch_size, 1, sidelen, sidelen)
+original_shape = (None, 1, sidelen, sidelen)
 latent_dim = 16
 intermediate_dim = 256
-nb_epoch = 0
 
 x = Input(batch_shape=original_shape)
 a = Conv2D(128, (5, 5), padding='same', activation='relu')(x)
@@ -37,11 +39,12 @@ m_decoded = m(l_decoded)
 n_decoded = n(m_decoded)
 x_decoded_mean = decoder_mean(n_decoded)
 
+vae = Model(x, x_decoded_mean)
+vae.compile(optimizer='rmsprop', loss='binary_crossentropy')
+
 file = "omniglot_16_"
 versionnum = 2
 
-vae = Model(x, x_decoded_mean)
-vae.compile(optimizer='rmsprop', loss="binary_crossentropy")
 
 computer = "desktop"
 
@@ -49,7 +52,7 @@ if computer == "laptop":
     x_train = np.load("/home/exa/Documents/PythonData/images_all_processed.npy")
 
 elif computer == "desktop":
-    x_train = np.load("D:\\conlangstuff\\images_all_processed.npy")
+    x_train = np.load("/media/exa/Archival drive/conlangstuff/images_all_processed.npy").astype("float16")
 
 x_train = x_train.reshape((x_train.shape[0], 1, sidelen, sidelen))
 

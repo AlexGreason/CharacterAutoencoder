@@ -53,7 +53,7 @@ if load:
         x_train = np.load("/home/exa/Documents/PythonData/images_all_processed.npy")
 
     elif computer == "desktop":
-        x_train = np.load("D:\\conlangstuff\\images_all_processed.npy")
+        x_train = np.load("/media/exa/Archival drive/conlangstuff/images_all_processed.npy")
 
     x_train = x_train.reshape((x_train.shape[0], 1, sidelen, sidelen))
 vae.load_weights("omniglot_16_1.sav")

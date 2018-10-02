@@ -11,7 +11,7 @@ from helperfunctions import genvec, Beziercurve
 
 batch_size = 32
 sidelen = 96
-original_shape = (batch_size, 1, sidelen, sidelen)
+original_shape = (None, 1, sidelen, sidelen)
 latent_dim = 16
 intermediate_dim = 256
 
@@ -80,18 +80,19 @@ screen = pygame.display.set_mode((x_dim, y_dim))
 screen.fill((0, 0, 0))
 numpoints = 2
 np.random.seed(int(time.time()))
-type = "random"
+type = "existing"
 
-z = genvec(type = type)
-zs = [genvec(type = type) for i in range(numpoints)]
+z = genvec(type = type, x_train=x_train, encoder=encoder)
+zs = [genvec(type = type, x_train=x_train, encoder=encoder) for i in range(numpoints)]
 iteration = 0
 while True:
     pygame.event.get()
     starttime = time.time()
     if iteration % n_frame == 0:
         t = 0
-        zs = [z] + [genvec(type = type) for i in range(numpoints - 1)]
+        zs = [z] + [genvec(type = type, x_train=x_train, encoder=encoder) for i in range(numpoints - 1)]
         print("changing course")
+    #time.sleep(.1)
     if t == 0:
         time.sleep(.5)
     iteration+= 1
@@ -103,7 +104,7 @@ while True:
     #frame[frame < .25] = 0
     #frame[frame >= .75] = 1
     base = (frame * 255).reshape((sidelen, sidelen)).astype(np.float32)
-    base = ndimage.gaussian_filter(base, sigma=1)
+    base = ndimage.gaussian_filter(base, sigma=2)
     resized = misc.imresize(base, (x_dim, y_dim), interp='bicubic')
     resized[resized < 128] = 0
     resized[resized >= 128] = 255

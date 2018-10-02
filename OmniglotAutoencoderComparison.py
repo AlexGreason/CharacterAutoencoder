@@ -9,7 +9,7 @@ from helperfunctions import process, genvec, Beziercurve
 
 batch_size = 32
 sidelen = 96
-original_shape = (batch_size, 1, sidelen, sidelen)
+original_shape = (None, 1, sidelen, sidelen)
 latent_dim = 16
 intermediate_dim = 256
 
@@ -50,7 +50,7 @@ if computer == "laptop":
     x_train = np.load("/home/exa/Documents/PythonData/images_all_processed.npy")
 
 elif computer == "desktop":
-    x_train = np.load("D:\\conlangstuff\\images_all_processed.npy")
+    x_train = np.load("/media/exa/Archival drive/conlangstuff/images_all_processed.npy")
 
 x_train = x_train.reshape((x_train.shape[0], 1, sidelen, sidelen))
 vae.load_weights("omniglot_16_1.sav")
@@ -100,8 +100,8 @@ if type == "pictures":
         print(z.shape)
         frame = generator.predict(z.reshape((1,latent_dim)))
         print(frame.shape)
-        frame[frame < .5] = 0
-        frame[frame >= .5] = 1
+        #frame[frame < .5] = 0
+        #frame[frame >= .5] = 1
         base = (frame * 255).reshape((sidelen, sidelen))
         base = base[:, :, None].repeat(3, -1).astype("uint8")
         surface = pygame.surfarray.make_surface(base)
@@ -111,7 +111,7 @@ if type == "pictures":
         screen.blit(newscreen, (600, 0))
         pygame.display.flip()
         endtime = time.time()
-        time.sleep(1)
+        time.sleep(1.5)
 
 else: #  "animation"
     iteration= 0
